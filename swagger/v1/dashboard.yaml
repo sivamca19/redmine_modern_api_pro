@@ -1,0 +1,57 @@
+paths:
+  /api/v1/dashboard:
+    get:
+      summary: Get user dashboard
+      description: Returns user's personal dashboard with summary stats, issues, and recent activity
+      tags:
+        - Dashboard
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Dashboard loaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDashboardResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/dashboard/project/{project_id}:
+    get:
+      summary: Get project dashboard
+      description: Returns project dashboard with various chart data for mobile visualization
+      tags:
+        - Dashboard
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Project identifier
+      responses:
+        '200':
+          description: Project dashboard loaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectDashboardResponse'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

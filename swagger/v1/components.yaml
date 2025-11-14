@@ -1,0 +1,366 @@
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Redmine-API-Key
+
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        api_token:
+          type: string
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+            login:
+              type: string
+            firstname:
+              type: string
+            lastname:
+              type: string
+            mail:
+              type: string
+            admin:
+              type: boolean
+
+    LogoutResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        error:
+          type: string
+
+    ProjectsListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        identifier:
+          type: string
+        description:
+          type: string
+        status:
+          type: integer
+        is_public:
+          type: boolean
+        parent_id:
+          type: integer
+        parent_name:
+          type: string
+        created_on:
+          type: string
+          format: date-time
+        updated_on:
+          type: string
+          format: date-time
+        homepage:
+          type: string
+        issues_count:
+          type: integer
+        open_issues_count:
+          type: integer
+        members_count:
+          type: integer
+
+    ProjectDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        project:
+          $ref: '#/components/schemas/ProjectDetail'
+
+    ProjectDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        identifier:
+          type: string
+        description:
+          type: string
+        status:
+          type: integer
+        is_public:
+          type: boolean
+        trackers:
+          type: array
+          items:
+            type: object
+        issue_categories:
+          type: array
+          items:
+            type: object
+        versions:
+          type: array
+          items:
+            type: object
+        custom_fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomField'
+
+    CustomFieldsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        custom_fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomField'
+        mandatory_fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomField'
+        optional_fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomField'
+
+    CustomField:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        field_format:
+          type: string
+        is_required:
+          type: boolean
+        is_filter:
+          type: boolean
+        searchable:
+          type: boolean
+        visible:
+          type: boolean
+        multiple:
+          type: boolean
+        default_value:
+          type: string
+        description:
+          type: string
+        possible_values:
+          type: array
+          items:
+            type: string
+        min_length:
+          type: integer
+        max_length:
+          type: integer
+        regexp:
+          type: string
+        field_type_info:
+          type: object
+          properties:
+            type:
+              type: string
+            options:
+              type: array
+              items:
+                type: string
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        per_page:
+          type: integer
+        total_count:
+          type: integer
+        total_pages:
+          type: integer
+
+    UserDashboardResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        summary:
+          type: object
+          properties:
+            total_issues:
+              type: integer
+            open_issues:
+              type: integer
+            overdue_issues:
+              type: integer
+            projects_count:
+              type: integer
+        my_issues:
+          type: object
+          properties:
+            by_status:
+              type: object
+            by_priority:
+              type: object
+        recent_activity:
+          type: array
+          items:
+            type: object
+
+    ProjectDashboardResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        project:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            total_issues:
+              type: integer
+            open_issues:
+              type: integer
+            closed_issues:
+              type: integer
+        issues_by_status:
+          $ref: '#/components/schemas/ChartData'
+        issues_by_tracker:
+          $ref: '#/components/schemas/ChartData'
+        issues_by_priority:
+          $ref: '#/components/schemas/ChartData'
+        issues_by_assignee:
+          $ref: '#/components/schemas/ChartData'
+        issues_timeline:
+          $ref: '#/components/schemas/TimelineChartData'
+        activity_chart:
+          $ref: '#/components/schemas/ChartData'
+        completion_rate:
+          $ref: '#/components/schemas/CompletionRate'
+
+    ChartData:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [pie, doughnut, bar, horizontal_bar, line]
+        title:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        data:
+          type: array
+          items:
+            type: integer
+        colors:
+          type: array
+          items:
+            type: string
+
+    TimelineChartData:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [line]
+        title:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        datasets:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+              data:
+                type: array
+                items:
+                  type: integer
+              color:
+                type: string
+              fill:
+                type: boolean
+
+    CompletionRate:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [progress]
+        title:
+          type: string
+        percentage:
+          type: number
+          format: float
+        total:
+          type: integer
+        completed:
+          type: integer
+        remaining:
+          type: integer
+
+  parameters:
+    ProjectId:
+      name: project_id
+      in: query
+      required: true
+      schema:
+        type: integer

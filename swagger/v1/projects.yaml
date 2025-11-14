@@ -1,0 +1,115 @@
+paths:
+  /api/v1/projects:
+    get:
+      summary: List user's projects
+      tags:
+        - Projects
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 25
+            maximum: 100
+          description: Items per page
+        - name: status
+          in: query
+          schema:
+            type: integer
+          description: Filter by status
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search by project name
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            default: name
+          description: Column to sort by
+        - name: sort_direction
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: asc
+          description: Sort direction
+      responses:
+        '200':
+          description: Projects loaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectsListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/projects/{id}:
+    get:
+      summary: Get project details
+      tags:
+        - Projects
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Project identifier or slug
+      responses:
+        '200':
+          description: Project loaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectDetailResponse'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/projects/{id}/custom_fields:
+    get:
+      summary: Get project custom fields
+      description: Returns all custom fields for the project, including mandatory and optional fields
+      tags:
+        - Projects
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Project identifier or slug
+      responses:
+        '200':
+          description: Custom fields loaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomFieldsResponse'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

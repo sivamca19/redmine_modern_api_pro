@@ -1,0 +1,21 @@
+paths:
+  /api/v1/logout:
+    delete:
+      summary: User logout
+      tags:
+        - Authentication
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Successful logout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
+        '401':
+          description: Invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
