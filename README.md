@@ -159,3 +159,31 @@ Get project custom fields. Returns all custom fields for the project, including 
 ## License
 
 This plugin is open-source and available under the [MIT License](https://opensource.org/licenses/MIT).
+
+## CORS Configuration for Mobile Apps
+
+To enable the API to work correctly with mobile applications or other cross-origin requests, you need to configure CORS (Cross-Origin Resource Sharing).
+
+1.  **Add `rack-cors` gem:**
+    Add the following line to your Redmine's `Gemfile` (usually located in the Redmine root directory, not the plugin directory):
+    ```ruby
+    gem 'rack-cors', require: 'rack/cors'
+    ```
+    Then run `bundle install`.
+
+2.  **Create `config/initializers/cors.rb`:**
+    Create a new file named `cors.rb` in your Redmine's `config/initializers/` directory (again, in the Redmine root, not the plugin) with the following content:
+    ```ruby
+    Rails.application.config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*' # or specify your app: 'http://localhost:8087'
+        resource '*',
+          headers: :any,
+          methods: [:get, :post, :put, :patch, :delete, :options, :head]
+      end
+    end
+    ```
+    **Note:** For production environments, it is highly recommended to replace `'*'` with the specific origins of your mobile application or client-side applications for security reasons.
+
+3.  **Restart Redmine:**
+    After making these changes, restart your Redmine server for the CORS configuration to take effect.
