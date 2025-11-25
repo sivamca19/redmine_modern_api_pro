@@ -24,7 +24,9 @@ module Api
                 firstname: user.firstname,
                 lastname: user.lastname,
                 mail: user.mail,
-                admin: user.admin
+                admin: user.admin,
+                created_on: user.created_on,
+                last_login_on: user.last_login_on
               },
               api_token: token
             },

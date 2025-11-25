@@ -58,15 +58,30 @@ module Api
 
       # My issues statistics
       def my_issues_stats
-        {
-          by_status: Issue.where(assigned_to_id: @current_user.id)
+        status_data = Issue.where(assigned_to_id: @current_user.id)
                           .joins(:status)
                           .group('issue_statuses.name')
-                          .count,
-          by_priority: Issue.where(assigned_to_id: @current_user.id)
+                          .count
+
+        priority_data = Issue.where(assigned_to_id: @current_user.id)
                             .joins(:priority)
                             .group('enumerations.name')
                             .count
+
+        status_total = status_data.values.sum
+        priority_total = priority_data.values.sum
+
+        {
+          by_status: {
+            data: status_data,
+            total: status_total,
+            percentages: calculate_percentages(status_data, status_total)
+          },
+          by_priority: {
+            data: priority_data,
+            total: priority_total,
+            percentages: calculate_percentages(priority_data, priority_total)
+          }
         }
       end
 
@@ -256,6 +271,13 @@ module Api
       def generate_colors(count)
         base_colors = ['#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6c757d', '#fd7e14', '#6f42c1', '#e83e8c', '#20c997']
         (base_colors * ((count / base_colors.size) + 1)).first(count)
+      end
+
+      # Calculate percentages for data hash
+      def calculate_percentages(data, total)
+        return {} if total.zero?
+
+        data.transform_values { |value| ((value.to_f / total) * 100).round(0) }
       end
     end
   end
