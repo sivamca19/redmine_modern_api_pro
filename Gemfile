@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
 
-group :development, :test do
+group :development, :test, :production do
   gem 'rswag-ui', '~> 2.16'
 end
